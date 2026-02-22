@@ -9,6 +9,9 @@
 ### 确保目录下有一个 D-pxxdns-index 的文件夹
 ### 最后到PXXDNS系统的 后台》系统》模板配置》点击启用即可  
 
+### 未保证加载速度 建议配置缓存规则　　
+### 当完整URL为 https://你的站点域名/index.php 时 触发缓存 亲测不影响PXXDNS系统的运行　　
+
 ## 后言  
 ### 求赞助  
 ![聚合收款-duck](https://fogpic-vip.3pw.pw/20260222/3111c256a50cb87eec65388824a930a8.png)  
