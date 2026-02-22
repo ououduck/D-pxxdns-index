@@ -1,6 +1,6 @@
 # D-pxxdns-index
 ## 为PXXDNS定制的企业级首页模板  
-![D-pxxdns-index](https://fogpic-vip.3pw.pw/20260222/31f8274238bce80707f938cc58b105e8.png)  
+![D-pxxdns-index](https://fogpic-vip.3pw.pw/20260222/61b1546526fe56be9cfd49ee286268f9.png)
 ### 特点：不同于其他固定模板 实时从数据库中获取站点信息
 
 ## 使用方法  
@@ -14,5 +14,5 @@
 
 ## 后言  
 ### 求赞助  
-![聚合收款-duck](https://fogpic-vip.3pw.pw/20260222/3111c256a50cb87eec65388824a930a8.png)  
+![1000015151](https://fogpic-vip.3pw.pw/20260222/49833e2987b98682b15dddc55dd03fe7.png)
 ### 最后 希望你能遵守MIT开源协议 不要修改底部信息
