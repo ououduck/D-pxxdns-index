@@ -3,13 +3,17 @@
  * D-pxxdns-index 为PXXDNS定制的企业级首页模板
  */
 
+
 // 读取 .env 文件
-$env_path = __DIR__ . '/../../../.env';
+$env_path = __DIR__ . '/../../.env';
 if (!file_exists($env_path)) {
     // 尝试在上一级目录查找 (兼容本地开发环境)
     $env_path = __DIR__ . '/../.env';
     if (!file_exists($env_path)) {
-        die("配置文件不存在 (Config File Not Found)");
+        $env_path = __DIR__ . '/../../../.env';
+        if (!file_exists($env_path)) {
+            die("配置文件不存在 (Config File Not Found)");
+        }
     }
 }
 
@@ -59,10 +63,11 @@ try {
     ];
 }
 
-// 2. 获取域名列表
+// 2. 获取域名列表 (随机6个)
 $domains = [];
 try {
-    $stmt = $pdo->query("SELECT * FROM `{$prefix}url` WHERE `status` = 1 ORDER BY `sort_order` ASC, `id` DESC");
+    // 随机获取6个启用状态的域名
+    $stmt = $pdo->query("SELECT * FROM `{$prefix}url` WHERE `status` = 1 ORDER BY RAND() LIMIT 6");
     $domains = $stmt->fetchAll();
 } catch (PDOException $e) {
     // ignore
@@ -81,7 +86,7 @@ if (!empty($site_config['link'])) {
 }
 
 // 默认显示数量
-$display_limit = 5;
+$display_limit = 6;
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -93,15 +98,19 @@ $display_limit = 5;
     <meta name="description" content="<?php echo htmlspecialchars($site_config['description']); ?>">
     
     <!-- 资源预加载 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//lib.baomitu.com">
+    <link rel="preconnect" href="https://lib.baomitu.com" crossorigin>
     
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- AOS Animation CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <?php if (!empty($site_config['favicon'])): ?>
+    <link rel="shortcut icon" href="<?php echo htmlspecialchars($site_config['favicon']); ?>">
+    <?php endif; ?>
+
+    <!-- Bootstrap 5 CSS (七牛云CDN) -->
+    <link href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome (七牛云CDN) -->
+    <link href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS (七牛云CDN) -->
+    <link href="https://cdn.staticfile.net/aos/2.3.1/aos.css" rel="stylesheet">
     
     <style>
         :root {
@@ -134,30 +143,6 @@ $display_limit = 5;
             overflow-x: hidden;
             line-height: 1.6;
         }
-
-        /* === Loading Animation === */
-        #preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
-        }
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid var(--primary-light);
-            border-left-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* === Navbar === */
         .navbar {
@@ -262,7 +247,8 @@ $display_limit = 5;
         /* === Hero Section === */
         .hero-section {
             padding: 180px 0 140px;
-            background: radial-gradient(circle at top right, rgba(239, 246, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 60%), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80');
+            /* 压缩图片质量至60%，分辨率降至1600px，提升加载速度 */
+            background: radial-gradient(circle at top right, rgba(239, 246, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 60%), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=60');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -419,7 +405,8 @@ $display_limit = 5;
         /* === Solutions Section (New) === */
         .solutions-section {
             padding: 100px 0;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80');
+            /* 压缩图片质量至60%，分辨率降至1600px */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=60');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -754,14 +741,19 @@ $display_limit = 5;
             .social-links { justify-content: center; display: flex; margin-bottom: 30px; }
             .friend-links-grid { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* [紧急修复] 强制显示所有 AOS 动画元素 */
+        /* 防止因 JS 加载失败或初始化延迟导致内容不可见 */
+        [data-aos] {
+            opacity: 1 !important;
+            transform: none !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            transition: none !important;
+        }
     </style>
 </head>
 <body>
-
-    <!-- Preloader -->
-    <div id="preloader">
-        <div class="spinner"></div>
-    </div>
 
     <!-- Mobile Top Header (Visible only on mobile) -->
     <div class="mobile-top-header justify-content-center">
@@ -985,7 +977,7 @@ $display_limit = 5;
                     </div>
                 <?php else: ?>
                     <?php foreach ($domains as $index => $domain): ?>
-                        <div class="col-md-6 col-lg-4 domain-item <?php echo $index >= $display_limit ? 'd-none' : ''; ?>" data-aos="fade-up" data-aos-delay="<?php echo ($index % 4) * 100; ?>">
+                        <div class="col-md-6 col-lg-4 domain-item" data-aos="fade-up" data-aos-delay="<?php echo ($index % 3) * 100; ?>">
                             <div class="domain-card">
                                 <div class="domain-icon">
                                     <?php if (!empty($domain['image_url'])): ?>
@@ -1015,13 +1007,11 @@ $display_limit = 5;
                 <?php endif; ?>
             </div>
 
-            <?php if (count($domains) > $display_limit): ?>
-                <div class="text-center mt-5" data-aos="fade-up">
-                    <button class="btn btn-white border px-4 py-2 rounded-pill shadow-sm bg-white" id="loadMoreBtn" onclick="toggleDomains()">
-                        查看更多 <i class="fas fa-chevron-down ms-2 small"></i>
-                    </button>
-                </div>
-            <?php endif; ?>
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="/user/#/login" target="_blank" class="btn btn-white border px-4 py-2 rounded-pill shadow-sm bg-white">
+                    查看更多 <i class="fas fa-arrow-right ms-2 small"></i>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -1096,28 +1086,13 @@ $display_limit = 5;
     <!-- Back to Top -->
     <a href="#" id="backToTop"><i class="fas fa-arrow-up"></i></a>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Scripts (七牛云CDN) -->
+    <script src="https://cdn.staticfile.net/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.staticfile.net/aos/2.3.1/aos.js"></script>
     
     <script>
+        // 初始化 AOS 动画库
         AOS.init({ once: true, offset: 60, duration: 800, easing: 'ease-out-cubic' });
-
-        // Preloader
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if (sessionStorage.getItem('visited')) {
-                preloader.style.display = 'none';
-            } else {
-                setTimeout(() => {
-                    preloader.style.opacity = '0';
-                    setTimeout(() => {
-                        preloader.style.display = 'none';
-                        sessionStorage.setItem('visited', 'true');
-                    }, 400);
-                }, 500);
-            }
-        });
 
         // Back to top
         const backToTop = document.getElementById('backToTop');
@@ -1129,46 +1104,8 @@ $display_limit = 5;
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
 
-        // Toggle Domains with Animation
-        function toggleDomains() {
-            const domainList = document.getElementById('domain-list');
-            const btn = document.getElementById('loadMoreBtn');
-            const isExpanded = btn.getAttribute('data-expanded') === 'true';
-            const limit = <?php echo $display_limit; ?>;
-            const allItems = domainList.querySelectorAll('.domain-item');
-
-            if (!isExpanded) {
-                // 展开逻辑
-                allItems.forEach(el => {
-                    if (el.classList.contains('d-none')) {
-                        el.classList.remove('d-none');
-                        // 强制重绘以触发动画
-                        void el.offsetWidth; 
-                        el.classList.add('aos-animate');
-                    }
-                });
-                btn.innerHTML = '收起列表 <i class="fas fa-chevron-up ms-2 small"></i>';
-                btn.setAttribute('data-expanded', 'true');
-            } else {
-                // 收缩逻辑
-                allItems.forEach((el, index) => {
-                    if (index >= limit) {
-                        el.classList.add('d-none');
-                        el.classList.remove('aos-animate');
-                    }
-                });
-                
-                btn.innerHTML = '查看更多 <i class="fas fa-chevron-down ms-2 small"></i>';
-                btn.setAttribute('data-expanded', 'false');
-                
-                // 平滑滚动回列表顶部
-                const listTop = document.getElementById('domains').offsetTop;
-                window.scrollTo({
-                    top: listTop - 100,
-                    behavior: 'smooth'
-                });
-            }
-        }
+        // Toggle Domains with Animation (AJAX Version)
+        // function toggleDomains() { ... }
     </script>
 </body>
 </html>
