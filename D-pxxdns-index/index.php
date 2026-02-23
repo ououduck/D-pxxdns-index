@@ -101,9 +101,7 @@ $display_limit = 6;
     <link rel="dns-prefetch" href="//cdn.staticfile.net">
     <link rel="preconnect" href="https://cdn.staticfile.net" crossorigin>
     
-    <?php if (!empty($site_config['favicon'])): ?>
-    <link rel="shortcut icon" href="<?php echo htmlspecialchars($site_config['favicon']); ?>">
-    <?php endif; ?>
+    <link rel="shortcut icon" href="./favicon.ico">
 
     <!-- Bootstrap 5 CSS (七牛云CDN) -->
     <link href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -1102,11 +1100,8 @@ $display_limit = 6;
         // Back to top
         const backToTop = document.getElementById('backToTop');
         
-        // 调试：打印按钮状态
-        console.log('BackToTop element:', backToTop);
-        
         window.addEventListener('scroll', () => {
-            // 恢复滚动检测
+            
             if (window.scrollY > 300) {
                 backToTop.style.opacity = '1';
                 backToTop.style.visibility = 'visible';
@@ -1121,8 +1116,7 @@ $display_limit = 6;
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
 
-        // Toggle Domains with Animation (AJAX Version)
-        // function toggleDomains() { ... }
+        
     </script>
 </body>
 </html>
