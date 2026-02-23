@@ -98,8 +98,8 @@ $display_limit = 6;
     <meta name="description" content="<?php echo htmlspecialchars($site_config['description']); ?>">
     
     <!-- 资源预加载 -->
-    <link rel="dns-prefetch" href="//lib.baomitu.com">
-    <link rel="preconnect" href="https://lib.baomitu.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.staticfile.net">
+    <link rel="preconnect" href="https://cdn.staticfile.net" crossorigin>
     
     <?php if (!empty($site_config['favicon'])): ?>
     <link rel="shortcut icon" href="<?php echo htmlspecialchars($site_config['favicon']); ?>">
@@ -247,13 +247,14 @@ $display_limit = 6;
         /* === Hero Section === */
         .hero-section {
             padding: 180px 0 140px;
-            /* 压缩图片质量至60%，分辨率降至1600px，提升加载速度 */
-            background: radial-gradient(circle at top right, rgba(239, 246, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 60%), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=60');
+            /* 使用更小的背景图或纯色渐变兜底 */
+            background: radial-gradient(circle at top right, rgba(239, 246, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 60%), url('https://fogpic-vip.3pw.pw/20260223/0783ddf2e00c4ac5f7a6e8932b4e323f.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             overflow: hidden;
             position: relative;
+            background-color: #f8fafc; /* 图片加载失败时的兜底色 */
         }
         .hero-title {
             font-size: 3.5rem;
@@ -405,13 +406,13 @@ $display_limit = 6;
         /* === Solutions Section (New) === */
         .solutions-section {
             padding: 100px 0;
-            /* 压缩图片质量至60%，分辨率降至1600px */
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=60');
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://fogpic-vip.3pw.pw/20260223/e26247200eed0e19f74e8ec42ed0581f.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #fff;
             position: relative;
+            background-color: #0f172a; /* 兜底色 */
         }
         .solution-title {
             font-size: 2.5rem;
@@ -721,11 +722,11 @@ $display_limit = 6;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
-            z-index: 99;
+            z-index: 2147483647; /* 浏览器允许的最大 z-index */
             cursor: pointer;
             text-decoration: none;
         }
-        #backToTop.show { opacity: 1; visibility: visible; }
+        /* #backToTop.show { opacity: 1; visibility: visible; } */
         #backToTop:hover { background: var(--primary-dark); transform: translateY(-5px); }
 
         /* Mobile specific fixes */
@@ -1072,10 +1073,14 @@ $display_limit = 6;
                 </div>
                 <div class="row mt-3 border-top border-secondary border-opacity-10 pt-3">
                     <div class="col-12 text-center small text-muted d-flex flex-wrap justify-content-center align-items-center gap-3">
-                        <span>Power BY PXXDNS</span>
-                        <span>Made BY <a href="https://www.pldduck.com" target="_blank" class="text-decoration-none text-secondary hover-white transition-colors">PLDDUCK</a></span>
-                        <a href="https://github.com/ououduck/D-pxxdns-index" target="_blank" class="text-decoration-none d-inline-flex align-items-center px-2 py-1 rounded bg-dark bg-opacity-50 text-light border border-secondary border-opacity-25 hover-bg-dark transition-all" style="font-size: 0.75rem;">
-                            <i class="fab fa-github me-1"></i> 此模板已在Github开源
+                        <span class="badge bg-white bg-opacity-10 text-light border border-white border-opacity-10 px-3 py-2 fw-normal">
+                            Power BY <strong class="text-white">PXXDNS</strong>
+                        </span>
+                        <span class="badge bg-white bg-opacity-10 text-light border border-white border-opacity-10 px-3 py-2 fw-normal">
+                            Made BY <a href="https://www.pldduck.com" target="_blank" class="text-white text-decoration-none fw-bold hover-primary">PLDDUCK</a>
+                        </span>
+                        <a href="https://github.com/ououduck/D-pxxdns-index" target="_blank" class="text-decoration-none d-inline-flex align-items-center px-3 py-2 rounded bg-white bg-opacity-10 text-light border border-white border-opacity-10 hover-bg-primary transition-all shadow-sm">
+                            <i class="fab fa-github me-2"></i> 此模板已在Github开源
                         </a>
                     </div>
                 </div>
@@ -1096,9 +1101,21 @@ $display_limit = 6;
 
         // Back to top
         const backToTop = document.getElementById('backToTop');
+        
+        // 调试：打印按钮状态
+        console.log('BackToTop element:', backToTop);
+        
         window.addEventListener('scroll', () => {
-            backToTop.classList.toggle('show', window.scrollY > 300);
+            // 恢复滚动检测
+            if (window.scrollY > 300) {
+                backToTop.style.opacity = '1';
+                backToTop.style.visibility = 'visible';
+            } else {
+                backToTop.style.opacity = '0';
+                backToTop.style.visibility = 'hidden';
+            }
         });
+        
         backToTop.addEventListener('click', (e) => {
             e.preventDefault();
             window.scrollTo({top: 0, behavior: 'smooth'});
