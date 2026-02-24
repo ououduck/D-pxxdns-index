@@ -101,14 +101,17 @@ $display_limit = 6;
     <link rel="dns-prefetch" href="//cdn.staticfile.net">
     <link rel="preconnect" href="https://cdn.staticfile.net" crossorigin>
     
-    <link rel="shortcut icon" href="./favicon.ico">
+    <!-- 优化 favicon 加载：添加类型声明和异步加载 -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
 
-    <!-- Bootstrap 5 CSS (七牛云CDN) -->
+    <!-- Bootstrap 5 CSS (七牛云CDN) - 添加预加载 -->
+    <link rel="preload" href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" as="style">
     <link href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome (七牛云CDN) -->
-    <link href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- AOS Animation CSS (七牛云CDN) -->
-    <link href="https://cdn.staticfile.net/aos/2.3.1/aos.css" rel="stylesheet">
+    <!-- Font Awesome (七牛云CDN) - 延迟加载 -->
+    <link href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- AOS Animation CSS (七牛云CDN) - 延迟加载 -->
+    <link href="https://cdn.staticfile.net/aos/2.3.1/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
     
     <style>
         :root {
@@ -135,7 +138,6 @@ $display_limit = 6;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: var(--text-main);
             background-color: var(--bg-body);
-            /* 添加微弱的背景纹理 */
             background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
             background-size: 32px 32px;
             overflow-x: hidden;
@@ -245,7 +247,6 @@ $display_limit = 6;
         /* === Hero Section === */
         .hero-section {
             padding: 180px 0 140px;
-            /* 使用更小的背景图或纯色渐变兜底 */
             background: radial-gradient(circle at top right, rgba(239, 246, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 60%), url('https://fogpic-vip.3pw.pw/20260223/0783ddf2e00c4ac5f7a6e8932b4e323f.jpg');
             background-size: cover;
             background-position: center;
@@ -818,7 +819,7 @@ $display_limit = 6;
                     <div class="mt-5 d-flex align-items-center gap-4 justify-content-center text-muted small">
                         <div><i class="fas fa-check-circle text-success me-1"></i> 99.99% 可用性</div>
                         <div><i class="fas fa-check-circle text-success me-1"></i> 免费 SSL 证书</div>
-                        <div><i class="fas fa-check-circle text-success me-1"></i> DDoS 防护</div>
+                        <div><i class="fas fa-check-circle text-success me-1"></i> 权威 DNS 解析</div>
                     </div>
                 </div>
             </div>
@@ -1089,34 +1090,36 @@ $display_limit = 6;
     <!-- Back to Top -->
     <a href="#" id="backToTop"><i class="fas fa-arrow-up"></i></a>
 
-    <!-- Scripts (七牛云CDN) -->
-    <script src="https://cdn.staticfile.net/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.staticfile.net/aos/2.3.1/aos.js"></script>
+    <!-- Scripts (七牛云CDN) - 添加 defer 异步加载 -->
+    <script src="https://cdn.staticfile.net/bootstrap/5.3.0/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.staticfile.net/aos/2.3.1/aos.js" defer></script>
     
     <script>
-        // 初始化 AOS 动画库
-        AOS.init({ once: true, offset: 60, duration: 800, easing: 'ease-out-cubic' });
-
-        // Back to top
-        const backToTop = document.getElementById('backToTop');
-        
-        window.addEventListener('scroll', () => {
-            
-            if (window.scrollY > 300) {
-                backToTop.style.opacity = '1';
-                backToTop.style.visibility = 'visible';
-            } else {
-                backToTop.style.opacity = '0';
-                backToTop.style.visibility = 'hidden';
+        // 等待 DOM 和脚本加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化 AOS 动画库（检查是否加载成功）
+            if (typeof AOS !== 'undefined') {
+                AOS.init({ once: true, offset: 60, duration: 800, easing: 'ease-out-cubic' });
             }
-        });
-        
-        backToTop.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        });
 
-        
+            // Back to top
+            const backToTop = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTop.style.opacity = '1';
+                    backToTop.style.visibility = 'visible';
+                } else {
+                    backToTop.style.opacity = '0';
+                    backToTop.style.visibility = 'hidden';
+                }
+            });
+            
+            backToTop.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        });
     </script>
 </body>
 </html>
