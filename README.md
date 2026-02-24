@@ -18,3 +18,4 @@
   
 ## 赞赏名单(站点)(如赞赏 可加QQ或邮件dduck@qq.com)
 ### dns.dengtanet.com -- 8.88RMB
+### redmao1.com -- 50RMB
