@@ -101,21 +101,12 @@ $display_limit = 6;
     <link rel="dns-prefetch" href="//cdn.staticfile.net">
     <link rel="preconnect" href="https://cdn.staticfile.net" crossorigin>
     
-    <!-- 优化 favicon 加载：添加类型声明和异步加载 -->
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" sizes="any">
-    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
-
-    <!-- Bootstrap 5 CSS (七牛云CDN) - 添加预加载 -->
-    <link rel="preload" href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" as="style">
+    <!-- Bootstrap 5 CSS (七牛云CDN) - 关键 CSS 立即加载 -->
     <link href="https://cdn.staticfile.net/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome (七牛云CDN) - 延迟加载 -->
-    <link href="https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
-    <!-- AOS Animation CSS (七牛云CDN) - 延迟加载 -->
-    <link href="https://cdn.staticfile.net/aos/2.3.1/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
+
     
     <style>
         :root {
-            /* 旗舰版 Ultra 配色 */
             --primary-color: #2563eb; /* 皇家蓝 */
             --primary-dark: #1e40af;
             --primary-light: #eff6ff;
@@ -742,15 +733,7 @@ $display_limit = 6;
             .friend-links-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* [紧急修复] 强制显示所有 AOS 动画元素 */
-        /* 防止因 JS 加载失败或初始化延迟导致内容不可见 */
-        [data-aos] {
-            opacity: 1 !important;
-            transform: none !important;
-            visibility: visible !important;
-            pointer-events: auto !important;
-            transition: none !important;
-        }
+       
     </style>
 </head>
 <body>
@@ -1090,19 +1073,9 @@ $display_limit = 6;
     <!-- Back to Top -->
     <a href="#" id="backToTop"><i class="fas fa-arrow-up"></i></a>
 
-    <!-- Scripts (七牛云CDN) - 添加 defer 异步加载 -->
-    <script src="https://cdn.staticfile.net/bootstrap/5.3.0/js/bootstrap.bundle.min.js" defer></script>
-    <script src="https://cdn.staticfile.net/aos/2.3.1/aos.js" defer></script>
-    
     <script>
-        // 等待 DOM 和脚本加载完成
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化 AOS 动画库（检查是否加载成功）
-            if (typeof AOS !== 'undefined') {
-                AOS.init({ once: true, offset: 60, duration: 800, easing: 'ease-out-cubic' });
-            }
-
-            // Back to top
+        // 立即初始化返回顶部按钮（不等待任何外部资源）
+        (function() {
             const backToTop = document.getElementById('backToTop');
             
             window.addEventListener('scroll', () => {
@@ -1113,13 +1086,27 @@ $display_limit = 6;
                     backToTop.style.opacity = '0';
                     backToTop.style.visibility = 'hidden';
                 }
-            });
+            }, { passive: true });
             
             backToTop.addEventListener('click', (e) => {
                 e.preventDefault();
                 window.scrollTo({top: 0, behavior: 'smooth'});
             });
+        })();
+        
+        // 页面加载完成后再加载非关键资源（Font Awesome）
+        window.addEventListener('load', function() {
+            // 延迟加载 Font Awesome（不阻塞页面加载进度条）
+            setTimeout(function() {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.staticfile.net/font-awesome/6.4.0/css/all.min.css';
+                document.head.appendChild(link);
+            }, 100);
         });
     </script>
+
+    <!-- Scripts (七牛云CDN) - 异步加载，不阻塞页面 -->
+    <script src="https://cdn.staticfile.net/bootstrap/5.3.0/js/bootstrap.bundle.min.js" async></script>
 </body>
 </html>
