@@ -72,7 +72,7 @@
 | dns.dengtanet.com | ¥8.88 |
 | redmao1.com | ¥50.00 |
 
-> 如需赞赏后添加到名单，请联系 QQ 或邮件：dduck@qq.com
+> 如需赞赏后添加到名单，请联系 QQ(2472652060) 或邮件：dduck@qq.com
 
 ---
 
